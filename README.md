@@ -25,6 +25,8 @@ One of the parts that required the most attention was the SSH authentication bet
 
 Once everything was stable, the result was exactly what I was after. Push code, watch the pipeline run, see the new version live on the server. No SSH, no manual pulls, no restarts by hand.
 
+There are things I would still improve. Adding health checks before swapping containers and eventually moving toward a proper blue-green deployment to avoid any downtime during updates. But this version already covers the core of what CI/CD is about in practice.
+
 ---
 
 Você pode testar por conta própria: http://54.233.211.29:8080
@@ -44,4 +46,10 @@ docker run -p 5000:5000 cicd-pipeline-aws
 
 O Projeto 1 foi focado em infraestrutura — provisionamento, configuração, containerização. Este projeto pega esse mesmo ambiente e adiciona a próxima camada natural: deploys automatizados. A ideia foi fechar o ciclo para que uma mudança no código vá de um push até a produção sem nenhuma etapa manual no meio.
 
-A aplicação em si é simples de propósito. Uma API em Flask com um único endpoint. O foco aqui nunca foi a aplicação — foi
+A aplicação em si é simples de propósito. Uma API em Flask com um único endpoint. O foco aqui nunca foi a aplicação — foi o pipeline ao redor dela. Fazer o GitHub Actions buildar a imagem corretamente, enviar para o Docker Hub e depois conectar em um servidor remoto e fazer o deploy sem nenhuma intervenção manual.
+
+Uma das partes que exigiu mais atenção foi a autenticação SSH entre o runner do Actions e a instância EC2. A chave privada precisa ser armazenada como um GitHub Secret, injetada no runner em tempo de execução e gravada em disco com as permissões certas antes de a conexão SSH ser estabelecida. Acertar o formato da chave e garantir que nada fosse perdido no processo exigiu algumas iterações, mas entender exatamente por que cada etapa era necessária valeu o esforço.
+
+Quando tudo ficou estável, o resultado foi exatamente o que eu queria. Push no código, pipeline rodando, nova versão no ar. Sem SSH, sem pull manual, sem restart na mão.
+
+Ainda há coisas que eu melhoraria. Adicionar health checks antes de trocar os containers e eventualmente caminhar para um deploy blue-green para evitar downtime durante as atualizações. Mas essa versão já cobre o núcleo do que CI/CD significa na prática.
