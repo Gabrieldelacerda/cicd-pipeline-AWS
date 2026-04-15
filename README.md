@@ -51,5 +51,3 @@ A aplicação em si é simples de propósito. Uma API em Flask com um único end
 Uma das partes que exigiu mais atenção foi a autenticação SSH entre o runner do Actions e a instância EC2. A chave privada precisa ser armazenada como um GitHub Secret, injetada no runner em tempo de execução e gravada em disco com as permissões certas antes de a conexão SSH ser estabelecida. Acertar o formato da chave e garantir que nada fosse perdido no processo exigiu algumas iterações, mas entender exatamente por que cada etapa era necessária valeu o esforço.
 
 Quando tudo ficou estável, o resultado foi exatamente o que eu queria. Push no código, pipeline rodando, nova versão no ar. Sem SSH, sem pull manual, sem restart na mão.
-
-Ainda há coisas que eu melhoraria. Adicionar health checks antes de trocar os containers e eventualmente caminhar para um deploy blue-green para evitar downtime durante as atualizações. Mas essa versão já cobre o núcleo do que CI/CD significa na prática.
