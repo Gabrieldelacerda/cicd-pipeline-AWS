@@ -2,8 +2,6 @@
 
 (versão em português abaixo)
 
-You can test it yourself: http://54.233.211.29:8080
-
 Before getting into the details, here's a quick overview of how everything works.
 
 A push to main triggers a pipeline on GitHub Actions. That pipeline builds a Docker image from the app, pushes it to Docker Hub, SSHs into the EC2 instance and restarts the container with the new version. From the moment you push to the moment the new version is live, nothing is done manually.
@@ -28,8 +26,6 @@ Once everything was stable, the result was exactly what I was after. Push code, 
 There are things I would still improve. Adding health checks before swapping containers and eventually moving toward a proper blue-green deployment to avoid any downtime during updates. But this version already covers the core of what CI/CD is about in practice.
 
 ---
-
-Você pode testar por conta própria: http://54.233.211.29:8080
 
 Antes de entrar nos detalhes, aqui vai uma visão geral rápida de como tudo funciona.
 
