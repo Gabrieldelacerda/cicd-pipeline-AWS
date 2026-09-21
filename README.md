@@ -1,32 +1,38 @@
-# CI/CD Pipeline — GitHub Actions, Docker and AWS EC2
+CI/CD Pipeline — GitHub Actions, Docker and AWS EC2
 
-A hands-on CI/CD lab built around a simple Flask application.
+This project is a small CI/CD lab built around a simple Flask application. The application itself is intentionally basic because the main focus is the delivery process around it.
 
-The application itself is intentionally small. The focus of the project is the delivery pipeline: building and testing a Docker image automatically, publishing versioned images, and deploying them to a remote EC2 instance when deployment is enabled.
+A push or pull request to the main branch starts the GitHub Actions workflow. The first job builds the Docker image, starts a temporary container and checks whether the application actually responds before the pipeline is allowed to continue.
 
-## How it works
+If deployment is enabled, the second job logs in to Docker Hub, builds and publishes the image, connects to an AWS EC2 instance over SSH and replaces the running container with the new version. Images are tagged with both latest and the Git commit SHA, so a deployment can be tied back to the exact commit that produced it.
 
-Every push or pull request to `main` triggers the CI job.
+The deployment step can be turned on or off with the ENABLE_EC2_DEPLOY repository variable. This lets the CI part keep running even when there is no EC2 instance active.
 
-GitHub Actions builds the Docker image, starts a container and sends an HTTP request to the application. The pipeline only continues if the application responds successfully.
+The main stack used here is GitHub Actions, Docker, Docker Hub, AWS EC2, SSH, Python and Flask.
 
-For pushes to `main`, the deployment job can also publish the image to Docker Hub and deploy it to AWS EC2. Deployment is controlled through the `ENABLE_EC2_DEPLOY` repository variable, so CI can run independently when no EC2 environment is active.
+To run the application locally:
 
-Images are tagged with both `latest` and the Git commit SHA, making each deployment traceable to a specific commit.
+docker build -t cicd-pipeline-aws .
 
-The deployment flow is:
+docker run --rm -p 5000:5000 cicd-pipeline-aws
 
-```text
-Git push
-   ↓
-GitHub Actions
-   ↓
-Build Docker image
-   ↓
-Run and test container
-   ↓
-Docker Hub
-   ↓
-SSH
-   ↓
-AWS EC2
+Then test it with:
+
+curl http://localhost:5000
+
+Expected response:
+
+{"message":"CI/CD pipeline working!","status":"ok"}
+
+The workflow itself is stored at:
+
+.github/workflows/deploy.yml
+
+The project was revalidated end to end using a temporary AWS EC2 instance. During that validation, the pipeline successfully built and tested the application, published the Docker image, connected to EC2 over SSH, deployed the container and returned a successful HTTP response from the running application.
+
+The temporary AWS infrastructure used for the validation was removed after testing.
+
+Evidence from the validation is available in the screenshots folder:
+
+screenshots/pipeline-success.png
+screenshots/deployment-response.png
